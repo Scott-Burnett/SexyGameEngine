@@ -1,7 +1,7 @@
 #pragma once
 /*  Class to represent 2D Point Vector 
     Designed by: Let's Make Games
-	    profile:    https://www.youtube.com/user/creaper
+	    Youtube:    https://www.youtube.com/user/creaper
 	    video:      https://www.youtube.com/watch?v=ESNN57ofa3w
 */
 #include <iostream>

@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Game.h"
-#include <iostream>
 
 Player::Player(int x, int y, int w, int h)
 {
@@ -25,8 +24,8 @@ Player::Player(int x, int y, int w, int h)
 	_root_dir = PLAYER_ROOT_DIR;
 	
 
-	_sprite = Sprite(this, 30, 30);
-	_mesh = Collision_Mesh(4, this);
+	_sprite = new Sprite(this, 30, 30);
+	_mesh = new Collision_Mesh(4, this);
 	_start_time = SDL_GetTicks();
 }
 
@@ -34,14 +33,6 @@ Player::Player() {
 }
 
 Player::~Player() {
-}
-
-void Player::draw() {
-	_sprite.draw();
-}
-
-bool Player::grounded() {
-	return Game::_level.at(_x + (_w / 2), _y + _h);
 }
 
 void Player::Update() {
@@ -189,7 +180,15 @@ void Player::Update() {
 	std::cout << "fc: " << std::to_string(_frame_counter) << std::endl << std::endl;
 }
 
+void Player::draw() {
+	_sprite->draw();
+}
+
+bool Player::intersects(Entity *other) {
+	return false;
+}
+
 void Player::linkComponents() {
-	_sprite.linkEntity(this);
-	_mesh.linkEntity(this);
+	_sprite->linkEntity(this);
+	_mesh->linkEntity(this);
 }

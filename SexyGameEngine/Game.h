@@ -1,7 +1,9 @@
 #pragma once
 #include "Window.h"
+#include "Entity.h"
 #include "Player.h"
 #include "Level.h"
+#include <iostream>
 #include <SDL.h>
 
 struct Keyboard {
@@ -49,11 +51,11 @@ public:
 	static Keyboard _keyboard;
 	static Mouse _mouse;
 
-	static Level _level;
 private:
 	const int fps = 60;
+	Level *_level;
+	Player *_player;
 
-	Player _player;
 
 public:
 	void Play();

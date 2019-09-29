@@ -5,12 +5,15 @@ Window Game::_window = Window("Main", 1900, 1080);
 Keyboard Game::_keyboard = Keyboard();
 Mouse Game::_mouse = Mouse();
 
-Level Game::_level = Level("Level1");
 
 Game::Game() {
+
+	_level = new Level("Resources/Levels/Level1");
+	_level->linkComponents();
+
 	// Initialize player
-	_player = Player(120, 120, 120, 120);
-	_player.linkComponents();
+	_player = new Player(120, 120, 120, 120);
+	_player->linkComponents();
 
 	// Start game loop
 	this->Play();
@@ -38,11 +41,15 @@ void Game::Play() {
 		this->GetEvents();
 
 		//Affect Objects
-		_player.Update();
+		_player->Update();
 
 		//Update Window
-		_player.draw();
+		_level->draw();
+		_player->draw();
 		_window.clear();
+
+		if (_player->intersects(_level))
+			break;
 
 		//Get frame time
 		frame_time = SDL_GetTicks() - frame_start;

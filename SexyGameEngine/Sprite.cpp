@@ -1,8 +1,35 @@
-#include "Sprite.h"
+#include "Entity.h"
 #include "Game.h"
-#include <SDL_image.h>
-#include <iostream>
-#include <string>
+//#include <SDL_image.h>
+//#include <iostream>
+//#include <string>
+
+
+// Struct animation
+Sprite::Animation::Animation() {
+}
+
+Sprite::Animation::Animation(int w, int h, const std::string &path) :
+_w(w), _h(h)
+{
+	SDL_Surface *surface = IMG_Load(path.c_str());
+	if (!surface) std::cerr << "Failed to create surface: " << path.c_str() << std::endl;
+
+	_texture = SDL_CreateTextureFromSurface(Game::_window._renderer, surface);
+	if (!_texture) std::cerr << "Failed to create texture: " << path.c_str() << std::endl;
+
+	_frames = surface->w / _w;
+
+	SDL_FreeSurface(surface);
+}
+
+Sprite::Animation::~Animation() {
+}
+
+SDL_Texture* Sprite::Animation::get() {
+	return _texture;
+}
+// Struct animation
 
 Sprite::Sprite() {
 }
@@ -39,8 +66,4 @@ void Sprite::draw() {
 
 	src.x = _img_w * _entity->frame_counter();
 	SDL_RenderCopy(Game::_window._renderer, _curr, &src, &dest);
-}
-
-void Sprite::linkEntity(Entity *entity) {
-	this->_entity = entity;
 }

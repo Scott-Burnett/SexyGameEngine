@@ -8,33 +8,38 @@ Level::Level(const std::string &root_dir) {
 	_y = 0;
 	_w = 1000;
 	_h = 1000;
-	_num_states = 1;
+	_state = 0;
+	_num_states = LEVEL_NUM_STATES;
+	_states = _level_states;
 	_frame_counter = 0;
 	_curr_frames = 1;
 
+	int _down_scale = LEVEL_MESH_DOWNSCALE;
+
 	_root_dir = root_dir;
-	_mesh = Collision_Mesh(_down_scale, this);
+	_mesh = new Collision_Mesh(_down_scale, this);
+	_sprite = new Sprite(this, _w / _down_scale, _h / _down_scale);
 }
 
 Level::~Level() {
 }
 
 bool Level::at(int x, int y) {
-	return _mesh.at((y * _w + x) / _down_scale);
+	return _mesh->at((y * _w + x) / _down_scale);
 }
 
 void Level::draw() {
-
+	_sprite->draw();
 }
 
 void Level::Update() {
 
 }
 
-void Level::linkComponents() {
-
+bool Level::intersects(Entity *other) {
+	return false;
 }
 
-bool Level::intersects(Entity *other) {
-	
+void Level::linkComponents() {
+	_mesh->linkEntity(this);
 }

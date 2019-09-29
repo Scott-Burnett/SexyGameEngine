@@ -75,4 +75,5 @@ Vector2D& Vector2D::operator/=(const Vector2D& v2) {
 
 std::ostream& operator<< (std::ostream& stream, const Vector2D& vector) {
 	stream << "(" << vector.x << "," << vector.y << ")";
+	return stream;
 }

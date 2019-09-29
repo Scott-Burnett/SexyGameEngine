@@ -1,7 +1,5 @@
 #pragma once
 #include "Entity.h"
-#include "Sprite.h"
-#include "Collision_Mesh.h"
 
 const std::string PLAYER_ROOT_DIR = "Resources/Player";
 
@@ -37,31 +35,31 @@ IN_MENUE = 21,
 RESTING = 22,
 DEAD = 23;
 
-static State *_player_states = new State[PLAYER_NUM_STATES]{
-	State(IDLE_RIGHT, 8, "idle_right"),
-	State(IDLE_LEFT, 8, "idle_left"),
-	State(RUN_RIGHT, 8, "run_right"),
-	State(RUN_LEFT, 8, "run_left"),
-	State(JUMP_RIGHT, 8, "jump_right"),
-	State(JUMP_LEFT, 8, "jump_left"),
-	State(DASH_RIGHT, 8, "dash_right"),
-	State(DASH_DOWN_RIGHT, 8, "dash_down_right"),
-	State(DASH_DOWN, 8, "dash_down"),
-	State(DASH_DOWN_LEFT, 8, "dash_down_left"),
-	State(DASH_LEFT, 8, "dash_left"),
-	State(DASH_UP_LEFT, 8, "dash_up_left"),
-	State(DASH_UP, 8, "dash_up"),
-	State(DASH_UP_RIGHT, 8, "dash_up_right"),
-	State(SLIDE_RIGHT, 8, "slide_right"),
-	State(SLIDE_LEFT, 8, "slide_left"),
-	State(FALL_RIGHT, 8, "fall_right"),
-	State(FALL_LEFT, 8, "fall_left"),
-	State(ATTACK_LIGHT, 8, "attack_light"),
-	State(ATTACK_HEAVY, 8, "attack_heavy"),
-	State(USE_ITEM, 8, "use_item"),
-	State(IN_MENUE, 8, "in_menue"),
-	State(RESTING, 8, "resting"),
-	State(DEAD, 8, "dead"),
+static Entity::State *_player_states = new Entity::State[PLAYER_NUM_STATES]{
+	Entity::State(IDLE_RIGHT, 8, "idle_right"),
+	Entity::State(IDLE_LEFT, 8, "idle_left"),
+	Entity::State(RUN_RIGHT, 8, "run_right"),
+	Entity::State(RUN_LEFT, 8, "run_left"),
+	Entity::State(JUMP_RIGHT, 8, "jump_right"),
+	Entity::State(JUMP_LEFT, 8, "jump_left"),
+	Entity::State(DASH_RIGHT, 8, "dash_right"),
+	Entity::State(DASH_DOWN_RIGHT, 8, "dash_down_right"),
+	Entity::State(DASH_DOWN, 8, "dash_down"),
+	Entity::State(DASH_DOWN_LEFT, 8, "dash_down_left"),
+	Entity::State(DASH_LEFT, 8, "dash_left"),
+	Entity::State(DASH_UP_LEFT, 8, "dash_up_left"),
+	Entity::State(DASH_UP, 8, "dash_up"),
+	Entity::State(DASH_UP_RIGHT, 8, "dash_up_right"),
+	Entity::State(SLIDE_RIGHT, 8, "slide_right"),
+	Entity::State(SLIDE_LEFT, 8, "slide_left"),
+	Entity::State(FALL_RIGHT, 8, "fall_right"),
+	Entity::State(FALL_LEFT, 8, "fall_left"),
+	Entity::State(ATTACK_LIGHT, 8, "attack_light"),
+	Entity::State(ATTACK_HEAVY, 8, "attack_heavy"),
+	Entity::State(USE_ITEM, 8, "use_item"),
+	Entity::State(IN_MENUE, 8, "in_menue"),
+	Entity::State(RESTING, 8, "resting"),
+	Entity::State(DEAD, 8, "dead")
 };
 
 const int
@@ -76,13 +74,12 @@ public:
 	void draw();
 	void Update();
 	void linkComponents();
+	bool intersects(Entity *other);
 
 private:
 	int _v_x, _v_y;
 	int _direction;
 
-	bool grounded();
-
-	Sprite _sprite;
-	Collision_Mesh _mesh;
+	//Sprite *_sprite;
+	//Collision_Mesh *_mesh;
 };
