@@ -18,7 +18,6 @@ public:
 
 	void draw();
 	void Update();
-	bool intersects(Entity *other);
 	void linkComponents();
 
 	bool at(int x, int y);

@@ -30,14 +30,12 @@ bool Level::at(int x, int y) {
 
 void Level::draw() {
 	_sprite->draw();
+	//std::cout << "Level:" << std::endl;
+	//_mesh->print();
 }
 
 void Level::Update() {
 
-}
-
-bool Level::intersects(Entity *other) {
-	return false;
 }
 
 void Level::linkComponents() {

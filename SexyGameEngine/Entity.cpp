@@ -25,8 +25,11 @@ void Entity::update() {
 void Entity::draw() {
 }
 
-bool Entity::intersects(Entity* other) {
-	return false;
+Vector2D Entity::intersects(Entity* other) {
+	Collision_Mesh *other_mesh = other->_mesh;
+	if (!other_mesh)
+		return Vector2D(0,0);
+	return this->_mesh->intersects(other_mesh);
 }
 
 void Entity::linkComponents() {

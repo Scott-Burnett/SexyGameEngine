@@ -34,6 +34,7 @@ void Game::Play() {
 	int frame_time;
 
 	while (!_window.isClosed()) {
+
 		//Get frame start time
 		frame_start = SDL_GetTicks();
 
@@ -43,13 +44,12 @@ void Game::Play() {
 		//Affect Objects
 		_player->Update();
 
+		Vector2D motion = _player->intersects(_level);
+
 		//Update Window
 		_level->draw();
 		_player->draw();
 		_window.clear();
-
-		if (_player->intersects(_level))
-			break;
 
 		//Get frame time
 		frame_time = SDL_GetTicks() - frame_start;

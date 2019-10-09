@@ -74,12 +74,6 @@ public:
 	void draw();
 	void Update();
 	void linkComponents();
-	bool intersects(Entity *other);
 
-private:
-	int _v_x, _v_y;
 	int _direction;
-
-	//Sprite *_sprite;
-	//Collision_Mesh *_mesh;
 };

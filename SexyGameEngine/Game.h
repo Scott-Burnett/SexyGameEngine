@@ -27,6 +27,8 @@ public:
 };
 
 const int
+// Environment Constants
+GRAVITY = 30,
 // Keyboard keycode mapping
 KEY_RIGHT = SDL_SCANCODE_D,
 KEY_LEFT = SDL_SCANCODE_A,

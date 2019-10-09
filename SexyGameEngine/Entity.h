@@ -37,8 +37,10 @@ public:
 	Collision_Mesh(int down_scale, Entity *entity);
 	~Collision_Mesh();
 
-	bool intersects(Collision_Mesh *other);
+	Vector2D intersects(Collision_Mesh *other);
 	bool intersects_AABB(Collision_Mesh *other);
+
+	void print();
 
 private:
 	int _w, _h;
@@ -110,6 +112,7 @@ public:
 
 	std::string _root_dir;
 	int _x, _y;
+	int _v_x, _v_y;
 	int _w, _h;
 
 	State *_states;
@@ -130,11 +133,13 @@ public:
 
 	virtual void update();
 	virtual void draw();
-	virtual bool intersects(Entity *other);
+	Vector2D intersects(Entity *other);
 	virtual void linkComponents();
 
 	inline int x() { return _x; }
-	inline int y() { return _y; } 
+	inline int y() { return _y; }
+	inline int v_x() { return _v_x; }
+	inline int v_y() { return _v_y; }
 	inline int w() { return _w; }
 	inline int h() { return _h; }
 	inline const std::string root_dir() { return _root_dir; }
