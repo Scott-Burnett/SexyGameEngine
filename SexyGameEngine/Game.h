@@ -1,10 +1,12 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
+
 #include "Window.h"
+#include "Level.h"
 #include "Entity.h"
 #include "Player.h"
-#include "Level.h"
 #include <iostream>
-#include <SDL.h>
+//#include "../dependencies/include/SDL.h"
 
 struct Keyboard {
 private:
@@ -68,3 +70,5 @@ public:
 	// Return Mouse Button State
 	inline static Uint32 mouseState(int button_mask) { return _mouse.mouseState(button_mask); }
 };
+
+#endif

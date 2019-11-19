@@ -2,10 +2,32 @@
 #include "fstream"
 #include <iostream>
 
+Collision_Mesh::Mesh::Mesh() {
+}
+
+Collision_Mesh::Mesh::Mesh(int w_scaled, int h_scaled, std::string path) {
+	int length = 0;
+	std::ifstream cmv_in(path);
+	while (cmv_in.get() != EOF) length++;
+	cmv_in.clear();
+	cmv_in.seekg(0, std::ios::beg);
+
+	_matrix = new bool[length];
+	_frames = length / h_scaled / w_scaled;
+
+	for (int k = 0; k < length; k++)
+		_matrix[k] = (cmv_in.get() == '1');
+
+	cmv_in.close();
+}
+
+Collision_Mesh::Mesh::~Mesh(){
+}
+
 Collision_Mesh::Collision_Mesh() {
 }
 
-Collision_Mesh::Collision_Mesh(int down_scale, Entity *entity)
+Collision_Mesh::Collision_Mesh(Entity *entity, int down_scale)
 {
 	this->_entity = entity;
 
@@ -68,48 +90,53 @@ Collision_Mesh::Collision_Mesh(int down_scale, Entity *entity)
 
 	// read from cmv file
 	for (int i = 0, length = 0; i < _entity->num_states(); i++) {
-		std::ifstream cmv_in(_entity->_root_dir + "/Mesh/" + _entity->file_name(i) + ".cmv");
-		while (cmv_in.get() != EOF) length++;
-		cmv_in.clear();
-		cmv_in.seekg(0, std::ios::beg);
-
-		_mesh[i] = { new bool[length], length / _h_scaled / _w_scaled };
-
-		for (int k = 0; k < length; k++)
-			_mesh[i]._matrix[k] = (cmv_in.get() == '1');
-
-		cmv_in.close();
+		_mesh[i] = Mesh(_w_scaled, _h_scaled, _entity->_root_dir + "/Mesh/" + _entity->file_name(i) + ".cmv");
 	}
+}
+
+Collision_Mesh::Collision_Mesh(Entity *entity, int down_scale, Mesh *mesh) {
+	this->_entity = entity;
+
+	_w = _entity->w();
+	_h = _entity->h();
+	_down_scale = down_scale;
+	_w_scaled = _w / _down_scale;
+	_h_scaled = _h / _down_scale;
+
+	_mesh = mesh;
 }
 
 Collision_Mesh::~Collision_Mesh() {
 }
 
+Collision_Mesh::Edge Collision_Mesh::intersectEdge(Collision_Mesh *other){
+	return _entity->intersectEdge(other->_entity);
+}
 
-Vector2D Collision_Mesh::intersects(Collision_Mesh *other) {
-	int _x = this->x();
-	int _y = this->y();
+Vector2D Collision_Mesh::intersect(Collision_Mesh *other) {
+	// return Global location of px intersection with other
+	int _x = this->x() + this->v_x();
+	int _y = this->y() + this-> v_y();
 
-	int other_x = other->x();
-	int other_y = other->y();
+	int other_x = other->x() + other->v_x();
+	int other_y = other->y() + other->v_y();
 	int other_w = other->w();
 	int other_h = other->h();
 
 	//Check for AABB Intersection
 	if (_y + _h < other_y)
-		return {0,0};
-	if (other_y + other->h() < _y)
-		return {0,0};
-	if (_x > other_x + other->w())
-		return {0,0};
+		return {-1,-1};
+	if (other_y + other_h < _y)
+		return {-1,-1};
+	if (_x > other_x + other_w)
+		return {-1,-1};
 	if (other_x > _x + _w)
-		return {0,0};
+		return {-1,-1};
 
 	//Px Intersection
 	int start_x, start_y,
 		start_other_x, start_other_y,
 		pos, pos_other,
-		d_x, d_y,
 		overlap_w, overlap_h;
 
 	int scale = _down_scale, scale_other = other->_down_scale;
@@ -118,55 +145,98 @@ Vector2D Collision_Mesh::intersects(Collision_Mesh *other) {
 	if (other_x < _x) {
 		start_other_x = (_x - other_x);
 		start_x = 0;
-		overlap_w = (_x + _w < other->x() + other->w()) ? _w : other->w() - start_other_x;
-		d_x = -1;
+		overlap_w = (_x + _w < other->x() + other_w) ? _w : other_w - start_other_x;
 	}
 	else {
 		start_x = (other_x - _x);
 		start_other_x = 0;
-		overlap_w = (other_x + other->w() < _x + _w) ? other->w() : _w - start_x;
-		d_x = 1;
+		overlap_w = (other_x + other_w < _x + _w) ? other_w : _w - start_x;
 	}
 	if (other_y < _y) {
 		start_other_y = (_y - other_y);
 		start_y = 0;
-		overlap_h = (_y + _h < other->y() + other->h()) ? _h : other->h() - start_other_y;
-		d_y = 1;
+		overlap_h = (_y + _h < other->y() + other_h) ? _h : other_h - start_other_y;
 	}
 	else {
 		start_y = (other_y - _y);
 		start_other_y = 0;
-		overlap_h = (other_y + other->h() < _y + _h) ? other->h() : _h - start_y;
-		d_y = -1;
+		overlap_h = (other_y + other_h < _y + _h) ? other_h : _h - start_y;
 	}
 
-	for (int y = 0; y < overlap_h; y += step)
-		for (int x = 0; x < overlap_w; x += step) {
-			pos = ((((start_y + y) / scale) * (curr_length() / scale)) + ((frame_counter() * _w) + start_x + x) / scale);
-			pos_other = ((((start_other_y + y) / scale_other) * (other->curr_length()) / scale_other) + ((other->frame_counter() * other->_w) + start_other_x + x) / scale_other);
-			if ((at(pos)) && (other->at(pos_other))) {
-				std::cout << "collision this : " << ((x + start_x) / scale) << " : " << ((y + start_y) / scale) << std::endl;
-				std::cout << "collision other: " << ((x + start_other_x) / scale_other) << " : " << ((y + start_other_y) / scale_other) << std::endl;
-				//return { d_x * _entity->v_x(), d_y * _entity->v_y() };
-				return { (overlap_w - x) * d_x, (overlap_h - y) * d_y };
+	switch(other->intersectEdge(this)) {
+	case Right: // return leftmost :: top->bottom, lef->right
+		for (int x = 0; x < overlap_w; x += step) { 
+			for (int y = 0; y < overlap_h; y += step) {
+				pos = ((((start_y + y) / scale) * (curr_length() / scale)) + ((frame_counter() * _w) + start_x + x) / scale);
+				pos_other = ((((start_other_y + y) / scale_other) * (other->curr_length()) / scale_other) + ((other->frame_counter() * other_w) + start_other_x + x) / scale_other);
+				if ((at(pos)) && (other->at(pos_other))) {
+					std::cout << "Collision: " << _x + start_x + x << ", " << _y + start_y + y << std::endl;
+					return {_x + start_x + x, _y + start_y + y};
+				}
 			}
 		}
+		break;
+	case Left: // return rightmost :: top->bottom, right->left
+		for (int x = overlap_w - 1; x > -1; x -= step) {
+			for (int y = 0; y < overlap_h; y += step) { 
+				pos = ((((start_y + y) / scale) * (curr_length() / scale)) + ((frame_counter() * _w) + start_x + x) / scale);
+				pos_other = ((((start_other_y + y) / scale_other) * (other->curr_length()) / scale_other) + ((other->frame_counter() * other_w) + start_other_x + x) / scale_other);
+				if ((at(pos)) && (other->at(pos_other))) {
+					std::cout << "Collision: " << _x + start_x + x << ", " << _y + start_y + y << std::endl;
+					return {_x + start_x + x, _y + start_y + y};
+				}
+			}
+		}
+		break;
+	case Bottom: // return topmost :: left->right, top->bottom
+		for (int y = 0; y < overlap_h; y += step) {
+			for (int x = 0; x < overlap_w; x += step) {
+				pos = ((((start_y + y) / scale) * (curr_length() / scale)) + ((frame_counter() * _w) + start_x + x) / scale);
+				pos_other = ((((start_other_y + y) / scale_other) * (other->curr_length()) / scale_other) + ((other->frame_counter() * other_w) + start_other_x + x) / scale_other);
+				if ((at(pos)) && (other->at(pos_other))) {
+					std::cout << "Collision: " << _x + start_x + x << ", " << _y + start_y + y << std::endl;
+					return {_x + start_x + x, _y + start_y + y};
+				}
+			}
+		}
+		break;
+	case Top: // return bottommost :: left->right, bottom->top
+		for (int y = overlap_h - 1; y > -1; y -= step) {
+			for (int x = 0; x < overlap_w; x += step) {
+				pos = ((((start_y + y) / scale) * (curr_length() / scale)) + ((frame_counter() * _w) + start_x + x) / scale);
+				pos_other = ((((start_other_y + y) / scale_other) * (other->curr_length()) / scale_other) + ((other->frame_counter() * other_w) + start_other_x + x) / scale_other);
+				if ((at(pos)) && (other->at(pos_other))) {
+					std::cout << "Collision: " << _x + start_x + x << ", " << _y + start_y + y << std::endl;
+					return {_x + start_x + x, _y + start_y + y};
+				}
+			}
+		}
+		break;
+	case None:
+		return {-1, -1};
+		break;
+	default:
+		break;
+	}
 
-	return {0,0};
+	return {-1, -1};
 }
 
 bool Collision_Mesh::intersects_AABB(Collision_Mesh *other) {
-	int _x = this->x();
-	int _y = this->y();
+	int _x = this->x() + this->v_x();
+	int _y = this->y() + this-> v_y();
 
-	int other_x = other->x();
-	int other_y = other->y();
+	int other_x = other->x() + other->v_x();
+	int other_y = other->y() + other->v_y();
+	int other_w = other->w();
+	int other_h = other->h();
 
-	if (_y + _h > other_y)
+	//Check for AABB Intersection
+	if (_y + _h < other_y)
 		return false;
-	if (other_y + other->h() > _y)
+	if (other_y + other_h < _y)
 		return false;
-	if (_x > other_x + other->w())
+	if (_x > other_x + other_w)
 		return false;
 	if (other_x > _x + _w)
 		return false;
@@ -182,6 +252,8 @@ void Collision_Mesh::print() {
 
 inline int Collision_Mesh::x() { return _entity->x(); }
 inline int Collision_Mesh::y() { return _entity->y(); }
+inline int Collision_Mesh::v_x() { return _entity->v_x(); }
+inline int Collision_Mesh::v_y() { return _entity->v_y(); }
 inline int Collision_Mesh::w() { return _entity->w(); }
 inline int Collision_Mesh::h() { return _entity->h(); }
 inline int Collision_Mesh::frame_counter() { return _entity->frame_counter(); }

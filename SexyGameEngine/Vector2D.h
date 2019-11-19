@@ -18,11 +18,13 @@ public:
 	Vector2D& Subtract(const Vector2D& v2);
 	Vector2D& Multiply(const Vector2D& v2);
 	Vector2D& Divide(const Vector2D& v2);
+	Vector2D& Rotate(int a);
 
 	friend Vector2D& operator+(Vector2D& v1, const Vector2D& v2);
 	friend Vector2D& operator-(Vector2D& v1, const Vector2D& v2);
 	friend Vector2D& operator*(Vector2D& v1, const Vector2D& v2);
 	friend Vector2D& operator/(Vector2D& v1, const Vector2D& v2);
+	friend Vector2D& operator*(Vector2D& v1, int i);
 
 	Vector2D& operator+=(const Vector2D& v2);
 	Vector2D& operator-=(const Vector2D& v2);

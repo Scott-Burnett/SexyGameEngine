@@ -41,6 +41,15 @@ Vector2D& Vector2D::Divide(const Vector2D& v2) {
 	return *this;
 }
 
+Vector2D& Vector2D::Rotate(int a) {
+	int rx = (cos(a) * this->x) - (sin(a) * this->y);
+	int ry = (sin(a) * this ->x) + (cos(a) * this->y);
+	this->x = rx;
+	this->y = ry;
+
+	return *this;
+}
+
 Vector2D& operator+(Vector2D& v1, const Vector2D& v2) {
 	return v1.Add(v2);
 }
@@ -55,6 +64,10 @@ Vector2D& operator*(Vector2D& v1, const Vector2D& v2) {
 
 Vector2D& operator/(Vector2D& v1, const Vector2D& v2) {
 	return v1.Divide(v2);
+}
+
+Vector2D& operator*(Vector2D& v1, int i){
+	return v1.Multiply({v1.x * i, v1.y * i});
 }
 
 Vector2D& Vector2D::operator+=(const Vector2D& v2) {

@@ -1,32 +1,43 @@
-#pragma once
-#include "Entity.h"
+#ifndef LEVEL_H
+#define LEVEL_H
 
-const int
-LEVEL_MESH_DOWNSCALE = 100;
+#include "Tile.h"
 
-const int LEVEL_NUM_STATES = 1;
-
-static Entity::State *_level_states = new Entity::State[LEVEL_NUM_STATES]{
-	Entity::State(0, 1, "Image1")
-};
-
-class Level : public Entity {
+class Level {
 public:
+	struct TileMap {
+		Tile *_matrix;
+		int _tileCount;
+		int _w;
+		int _h;
+
+		TileMap();
+		TileMap(const std::string &dir);
+		~TileMap();
+
+		Tile *get(int x, int y);
+		void draw();
+	};
 	Level();
 	Level(const std::string &root_dir);
 	~Level();
 
+	std::string _root_dir;
+	int _x, _y;
+	int _w, _h;
+
+	TileMap *_tiles;
+
+	void collideEntities(Entity *a, Entity *b);
+	void collideWith(Entity *other);
+
 	void draw();
 	void Update();
-	void linkComponents();
 
 	bool at(int x, int y);
 
 private:
-	int _down_scale;
-	int _num_background_elements, _num_foreground_elements;
-	//Sprite *_background_elements;
-	//Sprite *_platforms;
-	//Sprite *_foreground_elements;
-	//Collision_Mesh *_mesh;
+
 };
+
+#endif

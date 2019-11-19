@@ -1,12 +1,18 @@
-#pragma once
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include "Entity.h"
 
 const std::string PLAYER_ROOT_DIR = "Resources/Player";
 
 const int
-PLAYER_NUM_STATES = 24,
-PLAYER_H = 120,
-PLAYER_W = 120;
+PLAYER_HEIGHT = 120,
+PLAYER_WIDTH = 120;
+
+const int
+// Player Attributes
+PLAYER_MOVE_SPEED = 10,
+PLAYER_FPS = 6;
 
 const int
 //States Enumeration
@@ -33,7 +39,10 @@ ATTACK_HEAVY = 19,
 USE_ITEM = 20,
 IN_MENUE = 21,
 RESTING = 22,
-DEAD = 23;
+DEAD = 23,
+
+PLAYER_NUM_STATES = 24;
+// States
 
 static Entity::State *_player_states = new Entity::State[PLAYER_NUM_STATES]{
 	Entity::State(IDLE_RIGHT, 8, "idle_right"),
@@ -62,8 +71,59 @@ static Entity::State *_player_states = new Entity::State[PLAYER_NUM_STATES]{
 	Entity::State(DEAD, 8, "dead")
 };
 
-const int
-PLAYER_FPS = 6;
+static Sprite::Animation *PLAYER_ANIMATIONS = new Sprite::Animation[PLAYER_NUM_STATES] {
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "idle_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "idle_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "run_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "run_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "jump_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "jump_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_down_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_down.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_down_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_up_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_up.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dash_up_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "slide_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "slide_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "fall_right.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "fall_left.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "attack_light.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "attack_heavy.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "use_item.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "in_menue.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "resting.png"),
+	Sprite::Animation::Animation(30, 30, PLAYER_ROOT_DIR + "/Animations/" + "dead.png")
+};
+
+static Collision_Mesh::Mesh *PLAYER_MESH = new Collision_Mesh::Mesh[PLAYER_NUM_STATES] {
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "idle_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "idle_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "run_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "run_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "jump_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "jump_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_down_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_down.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_down_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_up_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_up.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dash_up_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "slide_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "slide_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "fall_right.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "fall_left.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "attack_light.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "attack_heavy.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "use_item.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "in_menue.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "resting.cmv"),
+	Collision_Mesh::Mesh::Mesh(30, 30, PLAYER_ROOT_DIR + "/Mesh/" + "dead.cmv")
+};
 
 class Player : public Entity {
 public:
@@ -73,7 +133,8 @@ public:
 
 	void draw();
 	void Update();
-	void linkComponents();
 
 	int _direction;
 };
+
+#endif

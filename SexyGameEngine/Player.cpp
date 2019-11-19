@@ -3,6 +3,8 @@
 
 Player::Player(int x, int y, int w, int h)
 {
+	_root_dir = PLAYER_ROOT_DIR;
+
 	_x = x;
 	_y = y;
 	_w = w;
@@ -21,10 +23,9 @@ Player::Player(int x, int y, int w, int h)
 
 	_fps = PLAYER_FPS;
 
-	_root_dir = PLAYER_ROOT_DIR;
-	
-	_sprite = new Sprite(this, 30, 30);
-	_mesh = new Collision_Mesh(4, this);
+	_sprite = new Sprite(this, 30, 30, PLAYER_ANIMATIONS);
+	_mesh = new Collision_Mesh(this, 4, PLAYER_MESH);
+
 	_start_time = SDL_GetTicks();
 }
 
@@ -49,7 +50,6 @@ void Player::Update() {
 			newState(JUMP_RIGHT);
 		}
 		if (Game::keyState(KEY_DOWN)) { 
-			_v_y += 10;
 			
 		}
 		if (Game::keyState(KEY_RIGHT)) {
@@ -74,7 +74,6 @@ void Player::Update() {
 			newState(JUMP_LEFT);
 		}
 		if (Game::keyState(KEY_DOWN)) {
-			_v_y += 10;
 
 		}
 		if (Game::keyState(KEY_RIGHT)) {
@@ -93,32 +92,6 @@ void Player::Update() {
 		break;
 	case JUMP_RIGHT:
 		if (Game::keyState(KEY_JUMP)) {
-			switch (_frame_counter) {
-			case 0:
-			case 1:
-			case 2:
-				_v_y -= 30;
-				proceedWithState();
-				break;
-			case 3:
-			case 4:
-			case 5:
-				_v_y -= 20;
-				proceedWithState();
-				break;
-			case 6:
-			case 7:
-				_v_y -= 15;
-				proceedWithState();
-				break;
-			case 8:
-				_v_y = 0;
-				newState(FALL_RIGHT);
-				break;
-			default:
-				break;
-			}
-
 			if (Game::mouseState(BTN_ATTACK_LIGHT)) {
 				// START LIGHT ATTACK
 				break;
@@ -135,8 +108,36 @@ void Player::Update() {
 			}
 			if (Game::keyState(KEY_LEFT)) {
 				_v_x -= 10;
-				newState(JUMP_LEFT);
+				_state = (JUMP_LEFT);
 			}
+			switch (_frame_counter) {
+			case 0:
+				_v_y -= 30;
+				proceedWithState();
+				break;
+			case 1:
+				_v_y -= 20;
+				proceedWithState();
+				break;
+			case 2:
+				_v_y -= 15;
+				proceedWithState();
+				break;
+			case 3:
+				_v_y -= 5;
+				proceedWithState();
+				break;
+			case 4:
+			case 5:	
+			case 6:
+			case 7:
+			case 8:
+				_v_y = 0;
+				newState(FALL_RIGHT);
+				break;
+			default:
+				break;
+			}	
 		}
 		else {
 			newState(FALL_RIGHT);
@@ -164,32 +165,6 @@ void Player::Update() {
 		break;
 	case JUMP_LEFT:
 		if (Game::keyState(KEY_JUMP)) {
-			switch (_frame_counter) {
-			case 0:
-			case 1:
-			case 2:
-				_v_y -= 30;
-				proceedWithState();
-				break;
-			case 3:
-			case 4:
-			case 5:
-				_v_y -= 20;
-				proceedWithState();
-				break;
-			case 6:
-			case 7:
-				_v_y -= 15;
-				proceedWithState();
-				break;
-			case 8:
-				_v_y = 0;
-				newState(FALL_LEFT);
-				break;
-			default:
-				break;
-			}
-
 			if (Game::mouseState(BTN_ATTACK_LIGHT)) {
 				// START LIGHT ATTACK
 				break;
@@ -208,6 +183,34 @@ void Player::Update() {
 			if (Game::keyState(KEY_LEFT)) {
 				_v_x -= 10;
 
+			}
+			switch (_frame_counter) {
+			case 0:
+				_v_y -= 30;
+				proceedWithState();
+				break;
+			case 1:
+				_v_y -= 20;
+				proceedWithState();
+				break;
+			case 2:
+				_v_y -= 15;
+				proceedWithState();
+				break;
+			case 3:
+				_v_y -= 5;
+				proceedWithState();
+				break;
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				_v_y = 0;
+				newState(FALL_LEFT);
+				break;
+			default:
+				break;
 			}
 		}
 		else {
@@ -322,16 +325,9 @@ void Player::Update() {
 		break;
 	default:
 		break;
-	}
+	}	
 
-	_x += _v_x;
-	_y += _v_y;
-
-	_v_x = 0;
-	_v_y = 0;
-
-	
-
+	// Debug stuff
 	std::cout <<"mX: " << Game::_mouse.x() << " mY: " << Game::_mouse.y() << std::endl;
 	std::cout << "x: " << std::to_string(_x) << " y: " << std::to_string(_y) << std::endl;
 	std::cout << "state: " << std::to_string(_state) << std::endl;
@@ -342,9 +338,4 @@ void Player::draw() {
 	_sprite->draw();
 	// std::cout << "Player:" << std::endl;
 	// _mesh->print();
-}
-
-void Player::linkComponents() {
-	_sprite->linkEntity(this);
-	_mesh->linkEntity(this);
 }

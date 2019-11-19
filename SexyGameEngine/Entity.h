@@ -1,8 +1,11 @@
-#pragma once
-#include "SDL.h"
-#include "SDL_image.h"
+#ifndef ENTITY_H
+#define ENTITY_H
+
+#include "../dependencies/include/SDL.h"
+#include "../dependencies/include/SDL_image.h"
 #include "Vector2D.h"
 #include <string>
+
 
 enum ComponentID {
 	SPRITE_COMPONENT, 
@@ -13,7 +16,9 @@ enum ComponentID {
 class Component;
 class Entity;
 
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Components %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 class Component {
 public:
 	Component();
@@ -26,18 +31,30 @@ public:
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Collision_Mesh ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 class Collision_Mesh : public Component {
 public:
+	enum Edge {
+		Right,
+		Bottom,
+		Left,
+		Top,
+		None
+	};
 
 	struct Mesh {
 	public:
 		bool *_matrix;
 		int _frames;
+		Mesh();
+		Mesh(int w_scaled, int h_scaled, const std::string dir);
+		~Mesh();
 	};
 
 	Collision_Mesh();
-	Collision_Mesh(int down_scale, Entity *entity);
+	Collision_Mesh(Entity *entity, int down_scale);
+	Collision_Mesh(Entity *entity, int down_scale, Mesh *mesh);
 	~Collision_Mesh();
 
-	Vector2D intersects(Collision_Mesh *other);
+	Edge intersectEdge(Collision_Mesh *other);
+	Vector2D intersect(Collision_Mesh *other);
 	bool intersects_AABB(Collision_Mesh *other);
 
 	void print();
@@ -52,6 +69,8 @@ private:
 public:
 	inline int x();
 	inline int y();
+	inline int v_x();
+	inline int v_y();
 	inline int w();
 	inline int h();
 	inline int frame_counter();
@@ -79,6 +98,7 @@ public:
 
 	Sprite();
 	Sprite(Entity *entity, int img_w, int img_h);
+	Sprite(Entity *entity, int img_w, int img_h, Animation *anims);
 	~Sprite();
 
 	void draw();
@@ -93,7 +113,10 @@ private:
 	Animation *animations;
 }; // Component Sprite
 
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Entity %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% */
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+
 class Entity {
 public:
 
@@ -122,19 +145,24 @@ public:
 	Uint32 _start_time;
 
 	// Components
-	Sprite *_sprite = nullptr;
-	Collision_Mesh *_mesh = nullptr;
+	Sprite *_sprite;
+	Collision_Mesh *_mesh;
 
 	Entity();
 	~Entity();
 
+	void linkComponents();
+	void holdFrame();
 	void proceedWithState();
 	void newState(int new_state);
-
+	void applyVelocity();
+	
 	virtual void update();
 	virtual void draw();
-	Vector2D intersects(Entity *other);
-	virtual void linkComponents();
+
+	virtual Collision_Mesh::Edge intersectEdge(Entity *other);
+	virtual Vector2D intersect(Entity *other);
+	virtual Vector2D displace(Vector2D location, Collision_Mesh::Edge edge);
 
 	inline int x() { return _x; }
 	inline int y() { return _y; }
@@ -149,3 +177,5 @@ public:
 	inline int frame_counter() { return _frame_counter; }
 	inline int curr_frames() { return _curr_frames; }
 }; // Class Entity
+
+#endif

@@ -1,5 +1,5 @@
 #include "window.h"
-#include <SDL_image.h>
+#include "../dependencies/include/SDL_image.h"
 #include <iostream>
 
 SDL_Renderer *Window::_renderer = nullptr;
@@ -36,7 +36,7 @@ bool Window::init() {
 		SDL_WINDOWPOS_CENTERED,
 		_width,
 		_height,
-		0//FLAGS
+		0 // FLAGS
 	);
 
 	if (_window == nullptr) {

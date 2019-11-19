@@ -1,7 +1,8 @@
-#pragma once
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <string>
-#include <SDL.h>
+#include "../dependencies/include/SDL.h"
 
 class Window {
 public:
@@ -25,3 +26,5 @@ private:
 	bool _closed = false;
 	SDL_Window *_window = nullptr; 	
 };
+
+#endif

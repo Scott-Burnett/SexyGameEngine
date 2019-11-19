@@ -9,7 +9,6 @@ Mouse Game::_mouse = Mouse();
 Game::Game() {
 
 	_level = new Level("Resources/Levels/Level1");
-	_level->linkComponents();
 
 	// Initialize player
 	_player = new Player(120, 120, 120, 120);
@@ -43,8 +42,9 @@ void Game::Play() {
 
 		//Affect Objects
 		_player->Update();
+		_level->Update();
 
-		Vector2D motion = _player->intersects(_level);
+		_player->applyVelocity();
 
 		//Update Window
 		_level->draw();
